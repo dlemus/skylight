@@ -131,6 +131,14 @@
       Students: "{{ user_count }}"
     rules:
       - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
         from_port: 22
         to_port: 22
         cidr_ip: 0.0.0.0/0
@@ -600,6 +608,28 @@
       value: "{{ item.public_ip }}"
       wait: yes
     with_items: "{{ docs_instances.results | map(attribute='tagged_instances') | list }}"
+
+  - name: "GitLab | Create DNS entry for gitlab.{{ name_prefix }}.{{ public_dns_zone }}"
+    route53:
+      state: present
+      zone: "{{ public_dns_zone }}"
+      record: "gitlab.{{ name_prefix }}.{{ public_dns_zone }}"
+      type: A
+      ttl: 600
+      value: "{{ item.public_ip }}"
+      wait: yes
+    with_items: "{{ gitlab_instances.results | map(attribute='tagged_instances') | list }}"
+
+  - name: "Tower | Create DNS entry for sX-tower.{{ name_prefix }}.{{ public_dns_zone }}"
+    route53:
+      state: present
+      zone: "{{ public_dns_zone }}"
+      record: "{{ item.tags.long_name }}"
+      type: A
+      ttl: 600
+      value: "{{ item.public_ip }}"
+      wait: yes
+    with_items: "{{ tower_instances.results | map(attribute='tagged_instances') | list }}"
 
 #  - name: "Docs | Create DNS entry for docs.{{ item.tags.long_name }}"
 #    route53:

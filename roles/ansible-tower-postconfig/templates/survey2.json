@@ -1,0 +1,14 @@
+{
+  "name": "Survey2",
+  "description": "Prompt for survey",
+  "spec": [
+    {
+      "type": "text",
+      "question_name": "Please enter a test message for your new website",
+      "question_description": "Website test message prompt",
+      "variable": "iis_test_message",
+      "required": true,
+      "default": "Hello World!"
+    }
+  ]
+}

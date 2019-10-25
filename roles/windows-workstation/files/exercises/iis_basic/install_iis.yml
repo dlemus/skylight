@@ -1,0 +1,3 @@
+---
+- name: install the iis web service
+  hosts: all

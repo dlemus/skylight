@@ -1,0 +1,24 @@
+{
+  "name": "Survey3",
+  "description": "Prompt for survey",
+  "spec": [
+    {
+      "type": "multiselect",
+      "question_name": "Categories",
+      "question_description": "Which Categories to install?",
+      "choices": "Application\nConnectors\nCriticalUpdates\nDefinitionUpdates\nDeveloperKits\nFeaturePacks\nGuidance\nSecurityUpdates\nServicePacks\nTools\nUpdateRollups\nUpdates",
+      "default": "CriticalUpdates\nSecurityUpdates",
+      "variable": "categories",
+      "required": true
+    },
+    {
+      "type": "multiplechoice",
+      "question_name": "Reboot after install?",
+      "question_description": "If the server needs to reboot, then do so after install",
+      "choices": "Yes\nNo",
+      "default": "Yes",
+      "variable": "reboot_server",
+      "required": true
+    }    
+  ]
+}

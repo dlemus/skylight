@@ -1,0 +1,30 @@
+---    
+- set_fact:
+    userid: "{{ inventory_hostname | regex_replace('[^0-9]', '') }}"
+
+# CREATE MACHINE CREDENTIAL 1.1
+- name: ADD USER CREDENTIAL INTO TOWER
+  tower_credential:
+    username: "{{ user_prefix }}{{ userid }}@{{ dns_domain_name }}"
+    password: "{{ users_password }}"
+    name: "Student Account"
+    kind: ssh
+    organization: Default
+    tower_username: admin
+    tower_password: "{{ towerpass }}"
+    tower_host: "s{{ userid }}-tower.{{ dns_domain_name }}"
+    tower_verify_ssl: no
+
+# CREATE MACHINE CREDENTIAL 1.2
+- name: ADD SCM CREDENTIAL INTO TOWER
+  tower_credential:
+    username: "{{ user_prefix }}{{ userid }}@{{ dns_domain_name }}"
+    password: "{{ users_password }}"
+    name: "Git Credential"
+    description: "SCM credential for playbook sync"
+    kind: scm
+    organization: Default
+    tower_username: admin
+    tower_password: "{{ towerpass }}"
+    tower_host: "s{{ userid }}-tower.{{ dns_domain_name }}"
+    tower_verify_ssl: no

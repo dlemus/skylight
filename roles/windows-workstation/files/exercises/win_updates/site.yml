@@ -1,0 +1,3 @@
+---
+- hosts: Windows
+  name: This is my Windows patching playbook

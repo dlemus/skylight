@@ -95,13 +95,19 @@
       content: ""
     register: initialize
 
-  - name: Add initial file
-    win_command: git add C:\Users\{{ user }}\Documents\{{ user }}\README.md
+  # Add exercises
+  - name: Add exercises to the folder
+    win_copy:
+      src: files/exercises/
+      dest: C:\Users\{{ user }}\Documents\{{ user }}
+
+  - name: Add all files
+    win_command: git add *
     args:
       chdir: C:\Users\{{ user }}\Documents\{{ user }}
     when: initialize.changed
 
-  - name: Commit initial file
+  - name: Commit all files
     win_command: git commit -m "Initialize"
     args:
       chdir: C:\Users\{{ user }}\Documents\{{ user }}

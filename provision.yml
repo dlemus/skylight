@@ -81,6 +81,17 @@
     - windows-common
     - windows-workstation
 
+- name: Ansible Host Post Config
+  hosts: tower
+  become: True
+  gather_facts: True
+  vars_files:
+    - [ 'vars/custom.yml', 'vars/main.yml' ]
+  tags:
+    - ansible-tower-postconfig
+  roles:
+    - ansible-tower-postconfig
+
 - name: Configure Docs Host
   hosts: docs
   become: True

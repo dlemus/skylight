@@ -1,0 +1,3 @@
+---
+# add the projects to tower after files are added to git
+- include_tasks: create_rhel_tower_assets.yml
