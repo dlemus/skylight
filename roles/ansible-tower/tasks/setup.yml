@@ -1,7 +1,7 @@
 ---
 - name: check if we need to do installer things
   uri:
-    url: https://localhost/api/v1/ping/
+    url: https://localhost/api/v2/ping/
     method: GET
     user: admin
     password: "{{ towerpass }}"
@@ -13,6 +13,42 @@
   set_fact:
     towerchk: "{{ checkout.json.version }}"
   when: checkout.json is defined
+
+# this is needed for now since rabbitmq-server version is not compatible with erlang as part of the in Tower 3.5.x installer
+# this is not needed with tower >= 3.6.x
+- block:
+    - name: add rabbitmq-server repo for RHEL 8 on ec2 (1/2)
+      yum_repository:
+        name: erlang
+        description: erlang repo
+        file: rabbitmq_server
+        baseurl: https://packagecloud.io/rabbitmq/erlang/el/8/$basearch
+        gpgcheck: no
+        repo_gpgcheck: yes
+        gpgkey: https://packagecloud.io/rabbitmq/erlang/gpgkey
+
+    - name: add rabbitmq-server repo for RHEL 8 on ec2 (2/2)
+      yum_repository:
+        name: rabbitmq_server
+        description: rabbitmq server repo
+        file: rabbitmq_server
+        baseurl: https://dl.bintray.com/rabbitmq/rpm/rabbitmq-server/v3.8.x/el/8/
+        enabled: yes
+
+    - name: import rabbitmq-server repo gpg key
+      rpm_key:
+        state: present
+        key: https://packagecloud.io/rabbitmq/erlang/gpgkey
+
+    - name: ensure erlang is installed
+      yum:
+        name: erlang
+        state: present
+        update_cache: yes
+  when:
+    - towerchk not in towerversion
+    - ansible_distribution_major_version|int == 8
+    - towerversion is version('3.6.0', '<')
 
 - name: download tower installer
   get_url:
@@ -48,7 +84,7 @@
     
 - name: wait for tower to be up
   uri:
-    url: https://localhost/api/v1/ping/
+    url: https://localhost/api/v2/ping/
     method: GET
     user: admin
     password: "{{ towerpass }}"
@@ -62,7 +98,7 @@
 
 - name: Post license key
   uri:
-    url: https://localhost/api/v1/config/
+    url: https://localhost/api/v2/config/
     method: POST
     user: admin
     password: "{{ towerpass }}"
